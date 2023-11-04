@@ -24,13 +24,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/", "/index").permitAll()
+                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/user").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().successHandler(successUserHandler)
                 .permitAll()
                 .and()
                 .logout()
-                .permitAll();
+                .permitAll()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+                .invalidateHttpSession(true)
+                .and()
+                .csrf().disable();
     }
 
     // аутентификация inMemory
@@ -43,7 +50,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .password("user")
                         .roles("USER")
                         .build();
+        UserDetails admin =
+                User.withDefaultPasswordEncoder()
+                        .username("admin")
+                        .password("admin")
+                        .roles("ADMIN")
+                        .build();
 
-        return new InMemoryUserDetailsManager(user);
+        return new InMemoryUserDetailsManager(user, admin);
     }
 }

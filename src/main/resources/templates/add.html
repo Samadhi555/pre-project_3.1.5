@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add User</title>
+    <style>
+        h1 {
+            margin-bottom: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label, input {
+            display: block;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 5px;
+            background-color: rgba(255, 213, 0, 0.95);
+        }
+        .green-button {
+            background-color: rgba(35, 79, 34, 0.82);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<h1>Добавление</h1>
+<form th:action="@{/logout}" method="post">
+    <button type="submit" class="green-button" style="position: absolute; top: 60px;">Выйти</button>
+</form>
+<form method="post" action="/add" style="margin-top: 80px;">
+    <label for="firstName">First Name:</label>
+    <input type="text" id="firstName" name="firstname" required>
+
+    <label for="lastName">Last Name:</label>
+    <input type="text" id="lastName" name="lastname" required>
+
+    <label for="age">Age:</label>
+    <input type="number" id="age" name="age" required>
+
+    <button type="submit">Добавить</button>
+</form>
+<a href="/admin">Назад к таблице</a>
+</body>
+</html>
