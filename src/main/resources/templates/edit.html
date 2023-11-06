@@ -7,40 +7,52 @@
             margin-bottom: 20px;
         }
         form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
             margin-bottom: 20px;
         }
-        label, input {
-            display: block;
+        label, input, select {
             margin-bottom: 10px;
         }
         button {
             padding: 5px;
-            background-color: rgba(255, 213, 0, 0.95);
+            background-color: rgba(0, 153, 255);
+            color: white;
+            border-radius: 5px; /* Закругленные углы */
         }
         .green-button {
-            background-color: rgba(35, 79, 34, 0.82);
-            color: white;
+            background-color: rgba(23, 54, 23, 0.82);
+            border-radius: 5px; /* Закругленные углы */
+        }
+        .back-link {
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 <h1>Изменение данных пользователя</h1>
 <form th:action="@{/logout}" method="post">
-    <button type="submit" class="green-button" style="position: absolute; top: 60px;">Выйти</button>
+    <button type="submit" class="green-button">Выйти</button>
 </form>
-<form method="post" action="/edit" style="margin-top: 80px;">
+<form th:action="@{'/user/' + ${user.id}}" method="post">
     <input type="hidden" name="id" th:value="${user.id}">
-    <label for="firstName">First Name:</label>
-    <input type="text" id="firstName" name="firstname" th:value="${user.firstname}" required>
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" th:value="${user.username}" required>
 
-    <label for="lastName">Last Name:</label>
-    <input type="text" id="lastName" name="lastname" th:value="${user.lastname}" required>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password">
 
-    <label for="age">Age:</label>
-    <input type="number" id="age" name="age" th:value="${user.age}" required>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" th:value="${user.email}" required>
+
+    <label for="roles">Roles:</label>
+    <select id="roles" name="roles" multiple="multiple" required>
+        <option th:each="role : ${listRoles}" th:value="${role.id}" th:text="${role.name}"></option>
+    </select>
 
     <button type="submit">Обновить данные</button>
 </form>
-<a href="/">Назад к таблице</a>
+<a class="back-link" href="/admin">Назад к таблице пользователей</a>
 </body>
 </html>

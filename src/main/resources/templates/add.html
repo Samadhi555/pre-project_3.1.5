@@ -4,42 +4,61 @@
     <title>Add User</title>
     <style>
         h1 {
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
             margin-bottom: 20px;
         }
-        label, input {
-            display: block;
+        label, input, select {
             margin-bottom: 10px;
         }
         button {
             padding: 5px;
-            background-color: rgba(255, 213, 0, 0.95);
+            background-color: rgba(0, 153, 255);
+            color: white;
+            border-radius: 5px;
         }
         .green-button {
-            background-color: rgba(35, 79, 34, 0.82);
-            color: white;
+            background-color: rgba(23, 54, 23, 0.82);
+            border-radius: 5px;
+        }
+        .back-link {
+            margin-top: 5px;
+        }
+        /* Добавление нижнего отступа к кнопке "Выйти" */
+        .header-buttons form {
+            margin-bottom: 10px;
         }
     </style>
 </head>
-<body>
-<h1>Добавление</h1>
-<form th:action="@{/logout}" method="post">
-    <button type="submit" class="green-button" style="position: absolute; top: 60px;">Выйти</button>
-</form>
-<form method="post" action="/add" style="margin-top: 80px;">
-    <label for="firstName">First Name:</label>
-    <input type="text" id="firstName" name="firstname" required>
+<body style="background-color: rgba(110,110,173,0.13);">
+<h1>Добавление пользователя</h1>
+<div class="header-buttons">
+    <form th:action="@{/logout}" method="post">
+        <button type="submit" class="green-button">Выйти</button>
+    </form>
+</div>
+<br>
+<form th:action="@{/user}" method="post" style="margin-top: 2px;">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
 
-    <label for="lastName">Last Name:</label>
-    <input type="text" id="lastName" name="lastname" required>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
 
-    <label for="age">Age:</label>
-    <input type="number" id="age" name="age" required>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="roles">Roles:</label>
+    <select id="roles" name="roles" multiple="multiple" required>
+        <option th:each="role : ${listRoles}" th:value="${role.id}" th:text="${role.name}"></option>
+    </select>
 
     <button type="submit">Добавить</button>
 </form>
-<a href="/admin">Назад к таблице</a>
+<a href="/admin">Назад к таблице пользователей</a>
 </body>
 </html>

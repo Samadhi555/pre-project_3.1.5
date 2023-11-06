@@ -7,21 +7,19 @@
             border-collapse: collapse;
             width: 100%;
             background: rgba(39, 39, 52, 0.13);
+            border-radius: 5px;
         }
 
         table, th, td {
             border: 1px solid #ffffff;
         }
 
-        button {
-            padding: 5px;
-            background-color: rgb(0, 153, 255);
-        }
-
         th {
             padding: 8px;
             text-align: left;
             font-family: "Candara", sans-serif;
+            background-color: rgba(112, 168, 111, 0.82);
+            color: white;
         }
 
         td {
@@ -39,21 +37,38 @@
             align-items: center;
         }
 
-        .header-buttons button {
-            margin-right: 10px;
+        .header-buttons a.button {
+            display: inline-block;
+            margin-right: 2px;
+            padding: 4px 15px;
+            background-color: rgba(51, 115, 49, 0.82);
+            color: white;
+            text-decoration: none;
+            border: none;
+            text-align: center;
+            border-radius: 5px;
         }
 
         .logout-button {
-            background-color: rgba(23, 31, 61, 0.83);
+            display: inline-block;
+            padding: 5px 15px;
+            background-color: rgba(23, 54, 23, 0.82);
             color: white;
-            padding: 3px;
+            text-decoration: none;
+            border: none;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .actions form {
+            display: inline;
         }
     </style>
 </head>
-<body style="background-color: rgba(110,110,173,0.13);">
-<h1>Таблица пользователей</h1>
+<body style="background-color: rgba(110, 110, 173, 0.13);">
+<h1 style="text-align: center; color: rgba(35,79,34,0.82);">Таблица пользователей</h1>
 <div class="header-buttons">
-    <button onclick="window.location.href = '/add';">Добавить нового пользователя</button>
+    <a th:href="@{/add}" class="button">Добавить нового пользователя</a>
 
     <form th:action="@{/logout}" method="post">
         <button type="submit" class="logout-button">Выйти</button>
@@ -64,19 +79,26 @@
 <table>
     <tr>
         <th>ID</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Age</th>
+        <th>UserName</th>
+        <th>Email</th>
+        <th>Role</th>
         <th>Actions</th>
     </tr>
     <tr th:each="user : ${users}">
         <td th:text="${user.id}">ID</td>
-        <td th:text="${user.firstname}">First Name</td>
-        <td th:text="${user.lastname}">Last Name</td>
-        <td th:text="${user.age}">Age</td>
+        <td th:text="${user.username}">UserName</td>
+        <td th:text="${user.email}">Email</td>
+        <td th:text="${user.getAuthorities()}">Role</td>
         <td class="actions">
-            <a th:href="@{'/edit?id=' + ${user.id}}">Edit</a>
-            <a th:href="@{'/delete?id=' + ${user.id}}">Delete</a>
+            <form th:method="GET" th:action="@{/user/{id}(id=${user.getId()})}">
+                <button type="submit">View</button>
+            </form>
+            <form th:method="GET" th:action="@{/user/{id}/edit(id=${user.getId()})}">
+                <button type="submit">Edit</button>
+            </form>
+            <form th:method="DELETE" th:action="@{'/delete/' + ${user.getId()}}" onsubmit="return confirm('Are you sure?')">
+                <input type="submit" value="Delete"/>
+            </form>
         </td>
     </tr>
 </table>
