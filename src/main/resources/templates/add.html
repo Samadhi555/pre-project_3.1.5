@@ -57,6 +57,9 @@
     <label for="email">Email:</label>
     <input type="email" id="email" name="email" required>
 
+    <label for="age">Age:</label>
+    <input type="number" id="age" name="age" required>
+
     <label for="roles">Roles:</label>
     <select id="roles" name="roles" multiple="multiple" required>
         <option th:each="role : ${listRoles}" th:value="${role.id}" th:text="${role.name}"></option>

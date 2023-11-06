@@ -1,10 +1,13 @@
 package ru.kata.spring.boot_security.demo.model;
 
 import lombok.Data;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,6 +28,11 @@ public class User implements UserDetails {
 
     @Column
     private String username;
+
+    @Column
+    @Min(1)
+    @Max(127)
+    private byte age;
 
     @Column
     private String password;
