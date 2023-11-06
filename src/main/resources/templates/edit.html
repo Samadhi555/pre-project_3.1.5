@@ -37,6 +37,12 @@
 </form>
 <form th:action="@{'/user/' + ${user.id}}" method="post">
     <input type="hidden" name="id" th:value="${user.id}">
+    <label for="firstname">FirstName:</label>
+    <input type="text" id="firstname" name="firstname" th:value="${user.firstname}" required>
+
+    <label for="lastname">LastName:</label>
+    <input type="text" id="lastname" name="lastname" th:value="${user.lastname}" required>
+
     <label for="username">Username:</label>
     <input type="text" id="username" name="username" th:value="${user.username}" required>
 

@@ -69,11 +69,15 @@
 <table>
     <tr>
         <th>ID</th>
+        <th>FirstName</th>
+        <th>LastName</th>
         <th>UserName</th>
         <th>Email</th>
     </tr>
     <tr>
         <td th:text="${user.id}">ID</td>
+        <td th:text="${user.firstname}">FirstName</td>
+        <td th:text="${user.lastname}">LastName</td>
         <td th:text="${user.username}">UserName</td>
         <td th:text="${user.email}">Email</td>
     </tr>

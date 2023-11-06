@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>User Management</title>
     <style>
         table {
             border-collapse: collapse;
@@ -79,6 +78,8 @@
 <table>
     <tr>
         <th>ID</th>
+        <th>FirstName</th>
+        <th>LastName</th>
         <th>UserName</th>
         <th>Email</th>
         <th>Role</th>
@@ -86,6 +87,8 @@
     </tr>
     <tr th:each="user : ${users}">
         <td th:text="${user.id}">ID</td>
+        <td th:text="${user.firstname}">FirstName</td>
+        <td th:text="${user.lastname}">LastName</td>
         <td th:text="${user.username}">UserName</td>
         <td th:text="${user.email}">Email</td>
         <td th:text="${user.getAuthorities()}">Role</td>

@@ -18,6 +18,12 @@ public class User implements UserDetails {
     private Long id;
 
     @Column
+    private String firstname;
+
+    @Column
+    private String lastname;
+
+    @Column
     private String username;
 
     @Column
