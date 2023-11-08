@@ -17,23 +17,24 @@ public class RoleService {
         this.roleRepository = roleRepository;
     }
 
-
     public List<Role> findAll() {
         return roleRepository.findAll();
     }
-
 
     public void save(Role role) {
         roleRepository.save(role);
     }
 
-
     public void deleteById(Long id) {
         roleRepository.deleteById(id);
     }
 
-
     public Role showRoleById(Long id) {
         return roleRepository.getById(id);
     }
+
+    public Role findByName(String name) {
+        return roleRepository.findByName(name);
+    }
+
 }

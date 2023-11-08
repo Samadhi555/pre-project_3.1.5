@@ -43,6 +43,9 @@ public class UserService {
     }
 
     public void save(User user) {
+        if (getAllUsers().contains(user)) {
+            return;
+        }
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
     }

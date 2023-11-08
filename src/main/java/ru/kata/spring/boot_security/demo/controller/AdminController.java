@@ -8,6 +8,9 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
+import java.util.List;
+
+
 @Controller
 public class AdminController {
     private final UserService userService;
@@ -21,30 +24,24 @@ public class AdminController {
 
     @GetMapping("/user/{id}")
     public String getUserPage(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("user", userService.getUserById(id));
-        return "/user";
-    }
-
-    @GetMapping(value = "/admin")
-    public String getAdminPage(Model model) {
-        model.addAttribute("users", userService.getAllUsers());
-        return "users";
+        User user = userService.getUserById(id);
+        model.addAttribute("user", user);
+        return "user";
     }
 
     @GetMapping("/user/{id}/edit")
-    public String getEditPage(Model model, @PathVariable("id") Long id, Model roles) {
-        roles.addAttribute("listRoles", roleService.findAll());
-        model.addAttribute("user", userService.getUserById(id));
+    public String getEditPage(Model model, @PathVariable("id") Long id) {
+        User user = userService.getUserById(id);
+        model.addAttribute("user", user);
+        model.addAttribute("listRoles", roleService.findAll());
         return "edit";
     }
-
 
     @PostMapping("/user/{id}")
     public String updateUser(@ModelAttribute("user") User user) {
         userService.update(user);
         return "redirect:/admin";
     }
-
 
     @GetMapping("/add")
     public String getNewUserPage(@ModelAttribute("user") User user, Model model) {
@@ -62,5 +59,12 @@ public class AdminController {
     public String deleteUserById(@PathVariable("id") Long id) {
         userService.delete(id);
         return "redirect:/admin";
+    }
+
+    @GetMapping("/admin")
+    public String getAdminPage(Model model) {
+        List<User> users = userService.getAllUsers();
+        model.addAttribute("users", users);
+        return "users";
     }
 }
