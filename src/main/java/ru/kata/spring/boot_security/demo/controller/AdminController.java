@@ -3,11 +3,13 @@ package ru.kata.spring.boot_security.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
+import java.security.Principal;
 import java.util.List;
 
 
@@ -61,10 +63,21 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/admin")
-    public String getAdminPage(Model model) {
-        List<User> users = userService.getAllUsers();
-        model.addAttribute("users", users);
-        return "users";
+//    @GetMapping("/admin")
+//    public String getAdminPage(Model model) {
+//        List<User> users = userService.getAllUsers();
+//        model.addAttribute("users", users);
+//        return "AdminPage";
+//    }
+
+    @GetMapping(value = "/admin")
+    public String getAdminPage(ModelMap model, Principal principal) {
+        User user = userService.findByUsername(principal.getName());
+        model.addAttribute("user", user);
+        List<User> listOfUsers = userService.getAllUsers();
+        model.addAttribute("listOfUsers", listOfUsers);
+        return "AdminPage";
     }
+
+
 }
