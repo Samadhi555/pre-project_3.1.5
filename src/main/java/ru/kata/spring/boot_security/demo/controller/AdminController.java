@@ -24,6 +24,25 @@ public class AdminController {
         this.roleService = roleService;
     }
 
+
+    @PostMapping("/admin")
+    public String createNewUser(@ModelAttribute("newUser") User newUser) {
+        newUser.setUsername(newUser.getEmail());
+        userService.save(newUser);
+        return "redirect:/admin";
+    }
+
+    @GetMapping("/admin")
+    public String getAdminPage(ModelMap model, Principal principal) {
+        User user = userService.findByUsername(principal.getName());
+        model.addAttribute("user", user);
+        List<User> listOfUsers = userService.getAllUsers();
+        model.addAttribute("listOfUsers", listOfUsers);
+        model.addAttribute("newUser", new User());
+        return "admin";
+    }
+
+
     @GetMapping("/user/{id}")
     public String getUserPage(@PathVariable("id") Long id, Model model) {
         User user = userService.getUserById(id);
@@ -36,48 +55,21 @@ public class AdminController {
         User user = userService.getUserById(id);
         model.addAttribute("user", user);
         model.addAttribute("listRoles", roleService.findAll());
-        return "edit";
+        return "admin";
     }
 
-    @PostMapping("/user/{id}")
-    public String updateUser(@ModelAttribute("user") User user) {
-        userService.update(user);
-        return "redirect:/admin";
-    }
 
-    @GetMapping("/add")
-    public String getNewUserPage(@ModelAttribute("user") User user, Model model) {
-        model.addAttribute("listRoles", roleService.findAll());
-        return "add";
-    }
-
-    @PostMapping("/user")
-    public String createUser(@ModelAttribute("user") User user) {
-        userService.save(user);
-        return "redirect:/admin";
-    }
-
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @DeleteMapping("/admin/delete/{id}")
     public String deleteUserById(@PathVariable("id") Long id) {
         userService.delete(id);
         return "redirect:/admin";
     }
 
-//    @GetMapping("/admin")
-//    public String getAdminPage(Model model) {
-//        List<User> users = userService.getAllUsers();
-//        model.addAttribute("users", users);
-//        return "AdminPage";
-//    }
 
-    @GetMapping(value = "/admin")
-    public String getAdminPage(ModelMap model, Principal principal) {
-        User user = userService.findByUsername(principal.getName());
-        model.addAttribute("user", user);
-        List<User> listOfUsers = userService.getAllUsers();
-        model.addAttribute("listOfUsers", listOfUsers);
-        return "AdminPage";
+    @PatchMapping("/admin/edit/{id}")
+    public String updateUser(@ModelAttribute("user") User user, @PathVariable("id") Long id) {
+        userService.update(user);
+        return "redirect:/admin";
     }
-
 
 }
