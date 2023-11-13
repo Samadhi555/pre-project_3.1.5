@@ -5,12 +5,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -26,19 +28,24 @@ public class AdminController {
 
 
     @PostMapping("/admin")
-    public String createNewUser(@ModelAttribute("newUser") User newUser) {
-        newUser.setUsername(newUser.getEmail());
-        userService.save(newUser);
+    public String createNewUser(@ModelAttribute("user") User user, @RequestParam("roles") List<Long> roleIds) {
+        user.setUsername(user.getEmail());
+        userService.save(user, roleIds);
         return "redirect:/admin";
     }
+
 
     @GetMapping("/admin")
     public String getAdminPage(ModelMap model, Principal principal) {
         User user = userService.findByUsername(principal.getName());
-        model.addAttribute("user", user);
         List<User> listOfUsers = userService.getAllUsers();
+        List<Role> listRoles = roleService.findAll();
+
+        model.addAttribute("user", user);
         model.addAttribute("listOfUsers", listOfUsers);
+        model.addAttribute("listRoles", listRoles);
         model.addAttribute("newUser", new User());
+
         return "admin";
     }
 
@@ -50,14 +57,6 @@ public class AdminController {
         return "user";
     }
 
-    @GetMapping("/user/{id}/edit")
-    public String getEditPage(Model model, @PathVariable("id") Long id) {
-        User user = userService.getUserById(id);
-        model.addAttribute("user", user);
-        model.addAttribute("listRoles", roleService.findAll());
-        return "admin";
-    }
-
 
     @DeleteMapping("/admin/delete/{id}")
     public String deleteUserById(@PathVariable("id") Long id) {
@@ -66,10 +65,24 @@ public class AdminController {
     }
 
 
-    @PatchMapping("/admin/edit/{id}")
-    public String updateUser(@ModelAttribute("user") User user, @PathVariable("id") Long id) {
-        userService.update(user);
+
+    @RequestMapping(value = "/admin/edit/{id}", method = {RequestMethod.PUT, RequestMethod.PATCH})
+    public String updateUser(@ModelAttribute("user") User user, @PathVariable("id") Long id,
+                             @RequestParam(name = "roles", required = false, defaultValue = "") List<Long> roleIds) {
+        userService.update(user, roleIds);
         return "redirect:/admin";
+    }
+
+
+    @GetMapping("/user/{id}/edit")
+    public String getEditPage(Model model, @PathVariable("id") Long id) {
+        User user = userService.getUserById(id);
+        List<Role> listRoles = roleService.findAll();
+        List<Long> roleIds = user.getRoles().stream().map(Role::getId).collect(Collectors.toList());
+        model.addAttribute("user", user);
+        model.addAttribute("listRoles", listRoles);
+        model.addAttribute("roleIds", roleIds);
+        return "admin";
     }
 
 }

@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.model;
 
 import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import javax.validation.constraints.Min;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Entity
@@ -41,8 +43,16 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
+
     public User() {
     }
+
+    public User(Set<Role> roles) {
+        roles.add(new Role(1L, "ROLE_USER"));
+        roles.add(new Role(2L, "ROLE_ADMIN"));
+        this.roles = roles;
+    }
+
 
     public User(String firstname, String lastname, byte age, String password, String email, Set<Role> roles) {
         this.firstname = firstname;
@@ -62,6 +72,15 @@ public class User implements UserDetails {
         this.password = password;
         this.email = email;
         this.roles = roles;
+    }
+
+
+    public String roleToString() {
+        StringBuilder sb = new StringBuilder();
+        for (Role role : roles) {
+            sb.append(role.getName().replaceAll("ROLE_", "").trim()).append(" ");
+        }
+        return sb.toString();
     }
 
     public Long getId() {
@@ -132,8 +151,11 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles;
+        return roles.stream()
+                .map(roleId -> new SimpleGrantedAuthority("ROLE_" + roleId))
+                .collect(Collectors.toList());
     }
+
 
     @Override
     public boolean isAccountNonExpired() {
@@ -169,4 +191,3 @@ public class User implements UserDetails {
         return Objects.hash(firstname, lastname, username, age, email);
     }
 }
-

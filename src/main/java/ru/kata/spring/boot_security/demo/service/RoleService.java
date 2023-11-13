@@ -5,7 +5,10 @@ import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 
+import javax.annotation.PostConstruct;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class RoleService {
@@ -36,5 +39,24 @@ public class RoleService {
     public Role findByName(String name) {
         return roleRepository.findByName(name);
     }
+
+    @PostConstruct
+    public void initRoles() {
+        createRoleIfNotFound("ROLE_USER");
+        createRoleIfNotFound("ROLE_ADMIN");
+    }
+
+    private void createRoleIfNotFound(String name) {
+        Role role = roleRepository.findByName(name);
+        if (role == null) {
+            role = new Role(name);
+            roleRepository.save(role);
+        }
+    }
+
+    public Set<Role> getRolesByIds(List<Long> roleIds) {
+        return new LinkedHashSet<>(roleRepository.findAllById(roleIds));
+    }
+
 
 }

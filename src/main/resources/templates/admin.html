@@ -26,11 +26,11 @@
 
 <nav class="navbar navbar-dark bg-dark">
     <div class="container-fluid">
-            <span>
-        <span class="navbar-brand font-weight-bold" th:text="${user.email}"></span>
-        <span class="navbar-brand"
-              th:text="'with roles: ' + ${#strings.replace(user.roles[0].name, 'ROLE_', '')}"></span>
-    </span>
+        <span>
+            <span class="navbar-brand font-weight-bold" th:text="${user.email}"></span>
+            <span class="navbar-brand"
+                  th:text="'with roles: ' + ${#strings.arrayJoin(user.roles.![name.substring(5)], ' ')}"></span>
+        </span>
         <ul class="navbar-nav">
             <li class="nav-item">
                 <a class="nav-link" href="/logout">Logout</a>
@@ -98,12 +98,7 @@
                                         <td th:text="${user.lastname}"></td>
                                         <td th:text="${user.age}"></td>
                                         <td th:text="${user.email}"></td>
-                                        <td class="align-bottom">
-                                            <div th:each="role : ${user.roles}">
-                                                <p id="role_field"
-                                                   th:text="${#strings.replace(role.name, 'ROLE_', '')}"></p>
-                                            </div>
-                                        </td>
+                                        <td th:text="${user.roleToString()}"></td>
                                         <td>
                                             <button class="btn btn-info" data-bs-toggle="modal"
                                                     th:data-bs-target="${'#eMdl'+ user.getId}"
@@ -120,69 +115,85 @@
                                                                     data-bs-dismiss="modal"
                                                                     aria-label="Close"></button>
                                                         </div>
-                                                        <form th:method="PATCH" th:action="@{/admin/edit/{id}(id=${user.id})}" th:object="${user}">
+                                                        <form th:action="@{/admin/edit/{id}(id=${user.id})}"
+                                                              th:object="${user}" method="post">
+                                                            <input type="hidden" name="_method" th:value="PATCH">
                                                             <div class="modal-body">
-                                                                <div class="mb-3 text-center">
-                                                                    <label for="nameUpdate"
-                                                                           class="font-weight-bold">First name</label>
-                                                                    <input type="text"
-                                                                           th:value="${user.firstname}" name="firstname"
-                                                                           class="form-control" id="nameUpdate"
-                                                                           required minlength="2" maxlength="20"/>
+                                                                <div class="modal-body">
+                                                                    <div class="mb-3 text-center">
+                                                                        <label for="IdUpdate"
+                                                                               class="font-weight-bold">ID</label>
+                                                                        <input type="text"
+                                                                               th:value="${user.getId()}" name="id"
+                                                                               class="form-control" id="IdUpdate"
+                                                                               readonly/>
+                                                                    </div>
+                                                                    <div class="mb-3 text-center">
+                                                                        <label for="nameUpdate"
+                                                                               class="font-weight-bold">First
+                                                                            name</label>
+                                                                        <input type="text"
+                                                                               th:value="${user.firstname}"
+                                                                               name="firstname"
+                                                                               class="form-control" id="nameUpdate"
+                                                                               required minlength="2" maxlength="20"/>
+                                                                    </div>
+                                                                    <div class="mb-3 text-center">
+                                                                        <label for="lastNameUpdate"
+                                                                               class="col-form-label font-weight-bold">Last
+                                                                            name</label>
+                                                                        <input type="text"
+                                                                               th:value="${user.lastname}"
+                                                                               name="lastname"
+                                                                               class="form-control" id="lastNameUpdate"
+                                                                               required minlength="2" maxlength="20"/>
+                                                                    </div>
+                                                                    <div class="mb-3 text-center">
+                                                                        <label for="ageUpdate"
+                                                                               class="col-form-label">Age</label>
+                                                                        <input type="text"
+                                                                               th:value="${user.age}" name="age"
+                                                                               class="form-control" id="ageUpdate"
+                                                                               required minlength="1" maxlength="3"/>
+                                                                    </div>
+                                                                    <div class="mb-3 text-center">
+                                                                        <label for="EmailUpdate"
+                                                                               class="font-weight-bold">Email</label>
+                                                                        <input type="text"
+                                                                               th:value="${user.email}"
+                                                                               name="email"
+                                                                               class="form-control" id="EmailUpdate"
+                                                                               required minlength="5" maxlength="40"/>
+                                                                    </div>
+                                                                    <div class="mb-3 text-center">
+                                                                        <label for="passwordUpdate"
+                                                                               class="col-form-label">Password</label>
+                                                                        <input type="password"
+                                                                               th:value="${user.password}"
+                                                                               name="password"
+                                                                               class="form-control" id="passwordUpdate"
+                                                                               required minlength="2" maxlength="20"/>
+                                                                    </div>
+                                                                    <div class="mb-3 text-center">
+                                                                        <label class="container-fluid"
+                                                                               for="rolesUpdate">Role</label>
+                                                                        <select class="form-control form-control-sm"
+                                                                                id="rolesUpdate" name="roles" multiple
+                                                                                style="height: 50px; width: 300px; margin: 0 auto">
+                                                                            <option th:each="role : ${listRoles}"
+                                                                                    th:value="${role.id}"
+                                                                                    th:text="${#strings.replace(role.name, 'ROLE_', '')}"
+                                                                                    th:selected="${roleIds != null and roleIds.contains(role.id)}"></option>
+                                                                        </select>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="mb-3 text-center">
-                                                                    <label for="lastNameUpdate"
-                                                                           class="col-form-label font-weight-bold">Last
-                                                                        name</label>
-                                                                    <input type="text"
-                                                                           th:value="${user.lastname}"
-                                                                           name="lastname"
-                                                                           class="form-control" id="lastNameUpdate"
-                                                                           required minlength="2" maxlength="20"/>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                            data-bs-dismiss="modal">Close
+                                                                    </button>
+                                                                    <input type="submit" class="btn btn-primary"
+                                                                           value="Edit"/>
                                                                 </div>
-                                                                <div class="mb-3 text-center">
-                                                                    <label for="ageUpdate"
-                                                                           class="col-form-label">Age</label>
-                                                                    <input type="text"
-                                                                           th:value="${user.age}" name="age"
-                                                                           class="form-control" id="ageUpdate"
-                                                                           required minlength="1" maxlength="3"/>
-                                                                </div>
-                                                                <div class="mb-3 text-center">
-                                                                    <label for="EmailUpdate"
-                                                                           class="font-weight-bold">Email</label>
-                                                                    <input type="text"
-                                                                           th:value="${user.email}"
-                                                                           name="email"
-                                                                           class="form-control" id="EmailUpdate"
-                                                                           required minlength="5" maxlength="40"/>
-                                                                </div>
-                                                                <div class="mb-3 text-center">
-                                                                    <label for="passwordUpdate"
-                                                                           class="col-form-label">Password</label>
-                                                                    <input type="password"
-                                                                           th:value="${user.password}"
-                                                                           name="password"
-                                                                           class="form-control" id="passwordUpdate"
-                                                                           required minlength="2" maxlength="20"/>
-                                                                </div>
-                                                                <div class="mb-3 text-center">
-                                                                    <label class="container-fluid "
-                                                                           for="rolesUpdate">Role</label>
-                                                                    <select class="form-control form-control-sm"
-                                                                            id="rolesUpdate" name="roles" multiple
-                                                                            th:value="${user.getRoles()}"
-                                                                            style="height: 50px; width: 300px; margin: 0 auto">
-                                                                        <option value="2">USER</option>
-                                                                        <option selected="selected" value="1">
-                                                                            ADMIN
-                                                                        </option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                                <input type="submit" class="btn btn-primary" value="Edit"/>
                                                             </div>
                                                         </form>
                                                     </div>
@@ -205,7 +216,9 @@
                                                                     data-bs-dismiss="modal"
                                                                     aria-label="Close"></button>
                                                         </div>
-                                                        <form th:method="DELETE" th:action="@{/admin/delete/{id}(id=${user.id})}" th:object="${user.id}">
+                                                        <form th:method="DELETE"
+                                                              th:action="@{/admin/delete/{id}(id=${user.id})}"
+                                                              th:object="${user.id}">
                                                             <div class="modal-body">
                                                                 <div class="mb-3 text-center">
                                                                     <label for="IdDelete"
@@ -253,17 +266,20 @@
                                                                 </div>
 
                                                                 <div class="mb-3 text-center">
-                                                                    <label for="roleDelete" class="font-weight-bold">Role</label>
-                                                                    <input type="text" th:value="${#strings.replace(user.roles[0].name, 'ROLE_', '')}"
-                                                                           name="roleDelete"
-                                                                           class="form-control" id="roleDelete"
-                                                                           readonly/>
+                                                                    <label for="roleDelete" class="font-weight-bold">Roles</label>
+                                                                    <input type="text"
+                                                                           th:value="${#strings.arrayJoin(user.roles.![name.substring(5)], ' ')}"
+                                                                           name="roleDelete" class="form-control"
+                                                                           id="roleDelete" readonly/>
                                                                 </div>
 
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                                <input type="submit" class="btn btn-danger" value="Delete"/>
+                                                                <button type="button" class="btn btn-secondary"
+                                                                        data-bs-dismiss="modal">Close
+                                                                </button>
+                                                                <input type="submit" class="btn btn-danger"
+                                                                       value="Delete"/>
                                                             </div>
                                                         </form>
                                                     </div>
@@ -283,58 +299,50 @@
                             <div class="card-body text-center">
                                 <form th:method="POST" th:action="@{/admin}" th:object="${newUser}">
 
-                                    <label class="font-weight-bold" for="firstNameNew">First name</label>
-                                    <br>
+                                    <label class="font-weight-bold" for="firstNameNew">First name</label><br>
                                     <input class="form-control" type="text" required minlength="2" maxlength="15"
-                                           name="firstname"
-                                           id="firstNameNew"
+                                           th:field="*{firstname}" id="firstNameNew"
                                            style="height: 30px; width: 300px; margin: 0 auto"
-                                           placeholder="firstname"/>
-                                    <br>
-                                    <label class="font-weight-bold" for="lastNameNew">Last name</label>
-                                    <br>
-                                    <input class="form-control" type="text" required minlength="2" maxlength="15"
-                                           name="lastname"
-                                           id="lastNameNew"
-                                           style="height: 30px; width: 300px; margin: 0 auto"
-                                           placeholder="lastname"/>
-                                    <br>
-                                    <label class="font-weight-bold" for="ageNew">Age</label>
-                                    <br>
-                                    <input class="form-control" type="text" step="1" min="0" required minlength="1"
-                                           maxlength="120" name="age"
-                                           id="ageNew"
-                                           style="height: 30px; width: 300px; margin: 0 auto"
-                                           placeholder="age"/>
-                                    <br>
-                                    <label class="font-weight-bold" for="EmailNew">Email</label>
-                                    <br>
-                                    <input class="form-control" type="text" required minlength="4" maxlength="15"
-                                           name="email"
-                                           id="EmailNew"
-                                           style="height: 30px; width: 300px; margin: 0 auto"
-                                           placeholder="email"/>
-                                    <br>
+                                           placeholder="firstname"/><br>
 
-                                    <label class="font-weight-bold" for="passwordNew">Password</label>
-                                    <br>
-                                    <input class="form-control" type="text" required minlength="3" maxlength="15"
-                                           name="password"
-                                           id="passwordNew"
+                                    <label class="font-weight-bold" for="lastNameNew">Last name</label><br>
+                                    <input class="form-control" type="text" required minlength="2" maxlength="15"
+                                           th:field="*{lastname}" id="lastNameNew"
                                            style="height: 30px; width: 300px; margin: 0 auto"
-                                           placeholder="password"/>
-                                    <br>
-                                    <label class="font-weight-bold">Role</label>
-                                    <select class="form-control form-control-sm" name="roles" multiple
-                                            th:value="${user.getRoles}"
+                                           placeholder="lastname"/><br>
+
+                                    <label class="font-weight-bold" for="ageNew">Age</label><br>
+                                    <input class="form-control" type="text" step="1" min="0" required minlength="1"
+                                           maxlength="120" th:field="*{age}" id="ageNew"
+                                           style="height: 30px; width: 300px; margin: 0 auto"
+                                           placeholder="age"/><br>
+
+                                    <label class="font-weight-bold" for="EmailNew">Email</label><br>
+                                    <input class="form-control" type="text" required minlength="4" maxlength="15"
+                                           th:field="*{email}" id="EmailNew"
+                                           style="height: 30px; width: 300px; margin: 0 auto"
+                                           placeholder="email"/><br>
+
+                                    <label class="font-weight-bold" for="passwordNew">Password</label><br>
+                                    <input class="form-control" type="text" required minlength="3" maxlength="15"
+                                           th:field="*{password}" id="passwordNew"
+                                           style="height: 30px; width: 300px; margin: 0 auto"
+                                           placeholder="password"/><br>
+
+                                    <label class="font-weight-bold" for="rolesNew">Role</label><br>
+                                    <select class="form-control form-control-sm" th:field="*{roles}" multiple
                                             style="height: 50px; width: 300px; margin: 0 auto">
-                                        <option value="1">ADMIN</option>
-                                        <option selected="selected" value="2">USER</option>
+                                        <option value="1" th:selected="${user.roles.contains(1)}">USER</option>
+                                        <option value="2" th:selected="${user.roles.contains(2)}">ADMIN</option>
                                     </select>
-                                    <br/>
+                                    <input type="hidden" th:field="*{roles}" id="rolesNew"/>
+
+
                                     <label>
-                                        <input type="text" th:value="${newUser.email}" name="username" style="display: none;"/>
+                                        <input type="text" th:value="${newUser.email}" th:field="*{username}"
+                                               style="display: none;"/>
                                     </label>
+
                                     <div>
                                         <button type="submit" class="btn btn-success">Add new user</button>
                                     </div>
@@ -371,11 +379,7 @@
                                     <td th:text="${user.lastname}"></td>
                                     <td th:text="${user.age}"></td>
                                     <td th:text="${user.email}"></td>
-                                    <td class="align-bottom" style="vertical-align: middle;">
-                                        <div th:each="role : ${user.roles}">
-                                            <p id="role" th:text="${#strings.replace(role.name, 'ROLE_', '')}"></p>
-                                        </div>
-                                    </td>
+                                    <td th:text="${user.roleToString()}"></td>
                                 </tr>
                                 </tbody>
                             </table>
