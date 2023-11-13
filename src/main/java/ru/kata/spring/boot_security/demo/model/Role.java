@@ -11,6 +11,8 @@ import java.util.Set;
 @Table(name = "roles")
 public class Role implements GrantedAuthority {
 
+    private static final long serialVersionUID = 2L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,6 +25,11 @@ public class Role implements GrantedAuthority {
 
     public String getName() {
         return name;
+    }
+
+    public Role(Long id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     public void setId(Long id) {
@@ -45,4 +52,11 @@ public class Role implements GrantedAuthority {
 
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
+
+    public Role() {
+    }
+
+    public Role(String name) {
+        this.name = name;
+    }
 }
