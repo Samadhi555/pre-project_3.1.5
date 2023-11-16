@@ -96,7 +96,7 @@
         .then(data => {
             document.getElementById('userEmail').textContent = data.email;
             const roleNames = data.roles.map(role => role.name.substring(5));
-            document.getElementById('userRoles').textContent = 'with roles: ' + roleNames.join(', ');
+            document.getElementById('userRoles').textContent = 'with roles: ' + roleNames.join(' ');
             fillUserData(data);
         });
     function fillUserData(user) {
@@ -109,7 +109,7 @@
             <td>${user.lastname}</td>
             <td>${user.age}</td>
             <td>${user.email}</td>
-            <td>${user.roles.map(role => role.name.substring(5)).join(', ')}</td>
+            <td>${user.roles.map(role => role.name.substring(5)).join(' ')}</td>
         `;
 
         userDataBody.appendChild(row);

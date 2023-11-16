@@ -35,7 +35,7 @@ public class UserController {
         model.addAttribute("listRoles", listRoles);
         model.addAttribute("newUser", new User());
 
-        return "newadmin";
+        return "new";
     }
 
     @GetMapping("/api/user")
