@@ -19,13 +19,17 @@ import java.util.Set;
 @Transactional
 public class UserService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+
+
     private final RoleService roleService;
     private final PasswordEncoder encoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder encoder, RoleRepository roleRepository, RoleService roleService, RoleService roleService1) {
+    public UserService(UserRepository userRepository, PasswordEncoder encoder, RoleRepository roleRepository, RoleService roleService, RoleRepository roleRepository1, RoleService roleService1) {
         this.userRepository = userRepository;
         this.encoder = encoder;
+        this.roleRepository = roleRepository1;
         this.roleService = roleService1;
     }
 
@@ -54,6 +58,27 @@ public class UserService {
     }
 
 
+//    public void update(User user, List<Long> roleIds) {
+//        User existingUser = userRepository.findById(user.getId())
+//                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+//
+//        existingUser.setFirstname(user.getFirstname());
+//        existingUser.setLastname(user.getLastname());
+//        existingUser.setAge(user.getAge());
+//        existingUser.setEmail(user.getEmail());
+//
+//        Set<Role> existingRoles = existingUser.getRoles();
+//        Set<Role> newRoles = roleService.getRolesByIds(roleIds);
+//
+//        existingRoles.removeIf(role -> role.getName().equals("ROLE_ADMIN"));
+//
+//        if (newRoles.stream().anyMatch(role -> role.getName().equals("ROLE_ADMIN")) && existingRoles.stream().noneMatch(role -> role.getName().equals("ROLE_ADMIN"))) {
+//            existingRoles.add(roleService.findByName("ROLE_ADMIN"));
+//        }
+//        userRepository.save(existingUser);
+//    }
+
+
     public void update(User user, List<Long> roleIds) {
         User existingUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -63,14 +88,8 @@ public class UserService {
         existingUser.setAge(user.getAge());
         existingUser.setEmail(user.getEmail());
 
-        Set<Role> existingRoles = existingUser.getRoles();
         Set<Role> newRoles = roleService.getRolesByIds(roleIds);
-
-        existingRoles.removeIf(role -> role.getName().equals("ROLE_ADMIN"));
-
-        if (newRoles.stream().anyMatch(role -> role.getName().equals("ROLE_ADMIN")) && existingRoles.stream().noneMatch(role -> role.getName().equals("ROLE_ADMIN"))) {
-            existingRoles.add(roleService.findByName("ROLE_ADMIN"));
-        }
+        existingUser.setRoles(newRoles);
 
         userRepository.save(existingUser);
     }
@@ -93,6 +112,10 @@ public class UserService {
         user.setPassword(encoder.encode(user.getPassword()));
         user.setRoles(roles);
         userRepository.save(user);
+    }
+
+    public List<Role> getAllRoles() {
+        return roleRepository.findAll();
     }
 
 }

@@ -12,7 +12,7 @@ function fillUserData(user) {
             <td>${user.lastname}</td>
             <td>${user.age}</td>
             <td>${user.email}</td>
-            <td>${user.roles.join(', ')}</td>
+            <td>${user.roles.map(role => role.name.substring(5)).join(' ')}</td>
         `;
 
     userDataBody.appendChild(row);

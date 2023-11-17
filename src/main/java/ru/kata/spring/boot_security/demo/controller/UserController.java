@@ -24,7 +24,7 @@ public class UserController {
         this.roleService = roleService;
     }
 
-    @GetMapping("/admin")
+    @GetMapping("/api/admin")
     public String getAdminPage(ModelMap model, Principal principal) {
         User user = userService.findByUsername(principal.getName());
         List<User> listOfUsers = userService.getAllUsers();
@@ -35,7 +35,7 @@ public class UserController {
         model.addAttribute("listRoles", listRoles);
         model.addAttribute("newUser", new User());
 
-        return "new";
+        return "new2";
     }
 
     @GetMapping("/api/user")
