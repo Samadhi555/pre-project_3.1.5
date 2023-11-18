@@ -1,6 +1,5 @@
 package ru.kata.spring.boot_security.demo.model;
 
-import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,8 +8,8 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -37,24 +36,24 @@ public class User implements UserDetails {
     private String email;
 
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
+    private List<Role> roles;
 
 
     public User() {
     }
 
-    public User(Set<Role> roles) {
+    public User(List<Role> roles) {
         roles.add(new Role(1L, "ROLE_USER"));
         roles.add(new Role(2L, "ROLE_ADMIN"));
         this.roles = roles;
     }
 
 
-    public User(String firstname, String lastname, byte age, String password, String email, Set<Role> roles) {
+    public User(String firstname, String lastname, byte age, String password, String email, List<Role> roles) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.age = age;
@@ -63,7 +62,7 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    public User(Long id, String firstname, String lastname, String username, byte age, String password, String email, Set<Role> roles) {
+    public User(Long id, String firstname, String lastname, String username, byte age, String password, String email, List<Role> roles) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -80,7 +79,7 @@ public class User implements UserDetails {
         for (Role role : roles) {
             sb.append(role.getName().replaceAll("ROLE_", "").trim()).append(" ");
         }
-        return sb.toString();
+        return sb.toString().trim();
     }
 
     public Long getId() {
@@ -141,13 +140,14 @@ public class User implements UserDetails {
         this.username = email;
     }
 
-    public Set<Role> getRoles() {
+    public List<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -190,4 +190,6 @@ public class User implements UserDetails {
     public int hashCode() {
         return Objects.hash(firstname, lastname, username, age, email);
     }
+
+
 }

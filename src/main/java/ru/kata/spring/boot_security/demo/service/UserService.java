@@ -8,12 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Transactional
@@ -23,10 +22,10 @@ public class UserService {
     private final PasswordEncoder encoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder encoder, RoleRepository roleRepository, RoleService roleService, RoleService roleService1) {
+    public UserService(UserRepository userRepository, PasswordEncoder encoder, RoleService roleService) {
         this.userRepository = userRepository;
         this.encoder = encoder;
-        this.roleService = roleService1;
+        this.roleService = roleService;
     }
 
     @Transactional(readOnly = true)
@@ -48,12 +47,11 @@ public class UserService {
         return user;
     }
 
-
     public void delete(Long id) {
         userRepository.deleteById(id);
     }
 
-
+    @Transactional
     public void update(User user, List<Long> roleIds) {
         User existingUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -63,36 +61,52 @@ public class UserService {
         existingUser.setAge(user.getAge());
         existingUser.setEmail(user.getEmail());
 
-        Set<Role> existingRoles = existingUser.getRoles();
-        Set<Role> newRoles = roleService.getRolesByIds(roleIds);
+        List<Role> newRoles = roleService.getRolesByIds(roleIds);
 
-        existingRoles.removeIf(role -> role.getName().equals("ROLE_ADMIN"));
-
-        if (newRoles.stream().anyMatch(role -> role.getName().equals("ROLE_ADMIN")) && existingRoles.stream().noneMatch(role -> role.getName().equals("ROLE_ADMIN"))) {
-            existingRoles.add(roleService.findByName("ROLE_ADMIN"));
+        if (newRoles.stream().anyMatch(role -> "ROLE_ADMIN".equals(role.getName()))) {
+            newRoles.clear();
+            newRoles.addAll(roleService.findAll());
         }
 
+        if (!newRoles.isEmpty()) {
+            existingUser.getRoles().retainAll(newRoles);
+        }
+
+        for (Role role : newRoles) {
+            if (!existingUser.getRoles().contains(role)) {
+                existingUser.getRoles().add(role);
+            }
+        }
         userRepository.save(existingUser);
     }
 
+    public void save(User user) {
 
-    @Transactional
-    public void save(User user, List<Long> roleIds) {
-        if (getAllUsers().contains(user)) {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             return;
         }
-
-        boolean containsUserRole = roleIds.stream()
-                .anyMatch(roleId -> roleId != null && roleId.equals(roleService.findByName("ROLE_USER").getId()));
-
-        if (!containsUserRole) {
-            roleIds.add(roleService.findByName("ROLE_USER").getId());
+        if (user.getRoles() == null) {
+            user.setRoles(new ArrayList<>());
         }
 
-        Set<Role> roles = roleService.getRolesByIds(roleIds);
+        if (user.getRoles().stream().anyMatch(role -> "ROLE_ADMIN".equals(role.getName()))) {
+            List<Role> allRoles = roleService.findAll();
+            user.setRoles(allRoles);
+        } else {
+
+            user.getRoles().forEach(role -> {
+                Role foundRole = roleService.findByName(role.getName());
+                if (foundRole != null) {
+                    role.setId(foundRole.getId());
+                }
+            });
+        }
         user.setPassword(encoder.encode(user.getPassword()));
-        user.setRoles(roles);
         userRepository.save(user);
+    }
+
+    public List<Role> getAllRoles() {
+        return roleService.findAll();
     }
 
 }
