@@ -4,7 +4,7 @@ package ru.kata.spring.boot_security.demo.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
@@ -18,6 +18,7 @@ public class UserController {
     private final UserService userService;
 
     private final RoleService roleService;
+
 
     public UserController(UserService userService, RoleService roleService) {
         this.userService = userService;
@@ -35,7 +36,7 @@ public class UserController {
         model.addAttribute("listRoles", listRoles);
         model.addAttribute("newUser", new User());
 
-        return "new2";
+        return "admin";
     }
 
     @GetMapping("/api/user")
@@ -44,4 +45,14 @@ public class UserController {
         model.addAttribute("user", user);
         return "user";
     }
+
+
+    @PatchMapping("/users/{id}")
+    public String editUser(@PathVariable Long id, @ModelAttribute("user") User user,
+                           @RequestParam(name = "roles", required = false, defaultValue = "") List<Long> roleIds) {
+        userService.update(user, roleIds);
+        return "redirect:/api/admin";
+    }
+
+
 }

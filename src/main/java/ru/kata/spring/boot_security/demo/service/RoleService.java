@@ -6,9 +6,8 @@ import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 
 import javax.annotation.PostConstruct;
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class RoleService {
@@ -54,8 +53,13 @@ public class RoleService {
         }
     }
 
-    public Set<Role> getRolesByIds(List<Long> roleIds) {
-        return new LinkedHashSet<>(roleRepository.findAllById(roleIds));
+    public List<Role> getRolesByIds(List<Long> roleIds) {
+        return new ArrayList<>(roleRepository.findAllById(roleIds));
+    }
+
+
+    public List<Role> getRolesByNames(List<String> roleNames) {
+        return roleRepository.findByNameIn(roleNames);
     }
 
 

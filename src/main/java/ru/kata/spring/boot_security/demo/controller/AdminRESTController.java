@@ -7,10 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
@@ -20,7 +20,7 @@ public class AdminRESTController {
 
 
     @Autowired
-    public AdminRESTController(UserService userService) {
+    public AdminRESTController(UserService userService, UserRepository userRepository) {
         this.userService = userService;
     }
 
@@ -29,17 +29,20 @@ public class AdminRESTController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
+        User user = userService.getUserById(id);
+        return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/user")
-    public ResponseEntity<HttpStatus> createUser(@ModelAttribute("user") User user,
-                                                 @RequestParam("roles") List<Long> roleIds) {
-        userService.save(user, roleIds);
+
+    @PostMapping("/newuser")
+    public ResponseEntity<HttpStatus> createUser(@RequestBody User user) {
+        userService.save(user);
         return ResponseEntity.ok().build();
     }
+
 
     @PatchMapping("/users/{id}")
     public ResponseEntity<HttpStatus> edit(@RequestBody User user,
@@ -62,6 +65,7 @@ public class AdminRESTController {
         List<Role> roles = userService.getAllRoles();
         return new ResponseEntity<>(roles, HttpStatus.OK);
     }
+
 }
 
 

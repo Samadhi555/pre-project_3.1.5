@@ -1,23 +1,19 @@
 <!DOCTYPE HTML>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="ru">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:font-family="http://www.w3.org/1999/xhtml" lang="ru">
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-          rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-          crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css">
-
-
-    <!-- Bootstrap JS and Popper.js -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <!-- Подключение jQuery из CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- Bootstrap Select JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+    <!-- Подключение Bootstrap из CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Подключение Bootstrap Select из CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.18/dist/css/bootstrap-select.min.css"
+          rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.18/dist/js/bootstrap-select.min.js"></script>
 
     <style>
         .tab-content {
@@ -39,15 +35,14 @@
 
     <title>Admin</title>
 </head>
-
 <body>
+
 
 <nav class="navbar navbar-dark bg-dark">
     <div class="container-fluid">
         <span>
-            <span class="navbar-brand font-weight-bold" th:text="${user.email}"></span>
-            <span class="navbar-brand"
-                  th:text="'with roles: ' + ${#strings.arrayJoin(user.roles.![name.substring(5)], ' ')}"></span>
+            <span class="navbar-brand font-weight-bold" id="userEmail"></span>
+            <span class="navbar-brand" id="userRoles"></span>
         </span>
         <ul class="navbar-nav">
             <li class="nav-item">
@@ -56,6 +51,18 @@
         </ul>
     </div>
 </nav>
+
+<script>
+    fetch('/page')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('userEmail').textContent = data.email;
+            const roleNames = data.roles.map(role => role.name.substring(5));
+            document.getElementById('userRoles').textContent = 'with roles: ' + roleNames.join(' ');
+            fillUserData(data);
+        });
+</script>
+
 
 <!-- Боковая панель -->
 <div class="d-flex align-items-start">
@@ -88,7 +95,7 @@
         <div class="tab-content bg-light overflow-auto" id="nav-tabContent">
             <!--                            Здесь содержится информация для вкладки User Table-->
             <div class="tab-pane fade show active" id="users" role="tabpanel" aria-labelledby="users-tab">
-                <h5 class="card-header" style="text-align: left; font-size: 1.25rem;">All users</h5>
+                <h5 class="card-header" style="text-align: left; font-size: 1.25rem; padding-left: 10px; margin-top: 10px; margin-bottom: 10px; font-family: sans-serif;">All users</h5>
 
 
                 <div class="p-3 border bg-light">
@@ -115,9 +122,9 @@
 
             <div class="tab-pane fade" id="new-user" role="tabpanel" aria-labelledby="new-user-tab">
                 <div class="container-fluid px-0">
-                    <div class="row gx-3">
+                    <div class="row gx-2">
                         <div class="col-12">
-                            <div class="p-2 border bg-light" style="font-size: 1.25rem;">Add new user</div>
+                            <div class="p-2 border bg-light" style="font-size: 1.25rem; font-family: sans-serif;">Add new user</div>
                         </div>
                     </div>
                 </div>
@@ -128,17 +135,17 @@
 
                                 <form id="newUserForm">
                                     <div class="mb-3 text-center ">
-                                        <label for="nameNew" class="sr-only"><b>Имя</b></label>
+                                        <label for="nameNew" class="sr-only"><b>First Name</b></label>
                                         <input type="text" id="nameNew"
-                                               class="form-control" placeholder="Name" required/>
+                                               class="form-control" placeholder="FirstName" required/>
                                     </div>
                                     <div class="mb-3 text-center">
-                                        <label for="lastNameNew" class="sr-only"><b>Фамилия</b></label>
+                                        <label for="lastNameNew" class="sr-only"><b>Last Name</b></label>
                                         <input type="text" id="lastNameNew"
                                                class="form-control" placeholder="LastName" required/>
                                     </div>
                                     <div class="mb-3 text-center">
-                                        <label for="ageNew" class="sr-only"><b>Возраст</b></label>
+                                        <label for="ageNew" class="sr-only"><b>Age</b></label>
                                         <input type="text" id="ageNew"
                                                class="form-control" placeholder="Age" required/>
                                     </div>
@@ -150,17 +157,19 @@
                                     </div>
 
                                     <div class="mb-3 text-center">
-                                        <label for="passwordNew" class="sr-only"><b>Пароль</b></label>
+                                        <label for="passwordNew" class="sr-only"><b>Password</b></label>
                                         <input type="text" id="passwordNew"
-                                               class="form-control" placeholder="Password required"/>
+                                               class="form-control" placeholder="Password" required/>
                                     </div>
                                     <div class="mb-3 text-center">
-                                        <label for="rolesNew" class="sr-only"><b>Роль</b></label>
-                                        <input type="text" id="rolesNew"
-                                               class="form-control" placeholder="ROLE_ROLE" required>
+                                        <label for="rolesNew" class="sr-only"><b>Role</b></label>
+                                        <select id="rolesNew" class="form-control" multiple required size="2">
+                                        </select>
                                     </div>
+
+
                                     <div class="d-grid gap-2">
-                                        <button class="btn btn-success" type="submit" onclick="newUserTab()">Добавить
+                                        <button class="btn btn-success" type="submit" onclick="newUserTab()">Add new user
                                         </button>
                                     </div>
                                 </form>
@@ -183,7 +192,6 @@
             <div class="modal-header">
                 <h5 class="modal-title fs-5" id="editModalLabel">Edit</h5>
 
-                <!-- Кнопка закрытия -->
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label=""></button>
             </div>
             <div class="modal-body">
@@ -194,7 +202,7 @@
                             <div class="mb-3 text-center">
                                 <label for="editId"><b>ID</b></label>
                                 <input class="form-control" type="text"
-                                       id="editId" disabled>
+                                       id="editId" disabled readonly/>
                             </div>
 
                             <div class="mb-3 text-center">
@@ -225,29 +233,22 @@
 
                             <div class="mb-3 text-center">
                                 <label for="editPassword"><b>Password</b></label>
-                                <input class="form-control" type="text"
+                                <input class="form-control" type="password"
                                        id="editPassword">
                             </div>
 
 
                             <div class="mb-3 text-center">
                                 <label for="editRole"><b>Role</b></label>
-                                <select class="form-control" id="editRole" multiple>
+                                <select class="form-control" id="editRole" multiple size="2">
                                 </select>
                             </div>
 
-<!--                            <div class="mb-3 text-center">-->
-<!--                                <label for="editRole"><b>Role</b></label>-->
-<!--                                <select class="form-control selectpicker" id="editRole" multiple>-->
-<!--                                </select>-->
-<!--                            </div>-->
-
-
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                                        id="editClose">Закрыть
+                                        id="editClose">Close
                                     <button type="button" class="btn btn-primary" id="editBtn"
-                                            onclick="editUser()">Изменить
+                                            onclick="editUser()">Edit
                                     </button>
                                 </button>
                             </div>
@@ -267,7 +268,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="example1">Удаление</h5>
+                <h5 class="modal-title" id="example1">Delete user</h5>
 
                 <!-- Кнопка закрытия -->
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label=""></button>
@@ -282,39 +283,47 @@
                                     <strong>Id</strong>
                                 </label>
                                 <input type="text" class="form-control"
-                                       id="deleteId">
+                                       id="deleteId" disabled readonly/>
                             </div>
                             <br>
                             <div class="form-group text-center">
                                 <label for="deleteName">
-                                    <strong>Имя</strong>
+                                    <strong>First name</strong>
                                 </label>
                                 <input type="text" class="form-control"
-                                       id="deleteName">
+                                       id="deleteName" disabled readonly/>
                             </div>
                             <br>
                             <div class="form-group text-center">
                                 <label for="deleteLastName">
-                                    <strong>Фамилия</strong>
+                                    <strong>Last name</strong>
                                 </label>
                                 <input type="text" class="form-control"
-                                       id="deleteLastName">
+                                       id="deleteLastName" disabled readonly/>
                             </div>
                             <br>
                             <div class="form-group text-center">
                                 <label for="deleteAge">
-                                    <strong>Возраст</strong>
+                                    <strong>Age</strong>
                                 </label>
                                 <input type="text" class="form-control"
-                                       id="deleteAge">
+                                       id="deleteAge" disabled readonly/>
+                            </div>
+                            <br>
+
+                            <div class="form-group text-center">
+                                <label for="deleteEmail">
+                                    <strong>Email</strong>
+                                </label>
+                                <input type="text" class="form-control"
+                                       id="deleteEmail" disabled readonly/>
                             </div>
                             <br>
                             <div class="form-group text-center">
                                 <label for="deleteRoles">
-                                    <strong>Роль</strong>
+                                    <strong>Role</strong>
                                 </label>
-                                <input type="text" class="form-control"
-                                       id="deleteRoles">
+                                <textarea class="form-control" id="deleteRoles" disabled readonly></textarea>
                             </div>
                         </form>
                     </div>
@@ -322,10 +331,10 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                        id="closeDelete">Закрыть
+                        id="closeDelete">Close
                 </button>
                 <button type="button" class="btn btn-danger" id="deleteBtn"
-                        onclick="deleteUser();">Удалить
+                        onclick="deleteUser();">Delete
                 </button>
 
             </div>
@@ -336,9 +345,9 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
-<script src="webjars/jquery/3.3.1/jquery.min.js"></script>
 
 <script>
+
     const url = 'http://localhost:8080/api/users';
 
     function getAllUsers() {
@@ -373,25 +382,64 @@
                     </td>
                 </tr>`;
         }
+
         document.getElementById('tableBodyAdmin').innerHTML = res;
     }
 
-    function newUserTab() {
+    function getAvailableRoles() {
+        return fetch('http://localhost:8080/api/roles')
+            .then(response => response.json());
+    }
+
+    function fillRolesSelect() {
+        const rolesSelect = document.getElementById('rolesNew');
+
+        getAvailableRoles()
+            .then(roles => {
+
+                rolesSelect.innerHTML = '';
+
+                roles.forEach(role => {
+                    const option = document.createElement('option');
+                    option.value = role.name;
+                    option.text = role.name.substring(5);
+                    rolesSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Ошибка при получении ролей:', error));
+    }
+
+
+    function addNewUser() {
         document.getElementById('newUserForm').addEventListener('submit', (e) => {
             e.preventDefault();
 
-            fetch('http://localhost:8091/api/users', {
+            const selectedRoles = Array.from(document.getElementById('rolesNew').selectedOptions)
+                .map(option => option.value);
+
+
+            console.log('Selected Roles:', selectedRoles);
+            console.log('Request Body:', JSON.stringify({
+                firstname: document.getElementById('nameNew').value,
+                lastname: document.getElementById('lastNameNew').value,
+                age: document.getElementById('ageNew').value,
+                password: document.getElementById('passwordNew').value,
+                email: document.getElementById('emailNew').value,
+                roles: selectedRoles.map(role => ({name: role}))
+            }));
+
+            fetch('http://localhost:8080/api/newuser', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json;charset=utf-8'
                 },
                 body: JSON.stringify({
-                    name: document.getElementById('nameNew').value,
+                    firstname: document.getElementById('nameNew').value,
                     lastname: document.getElementById('lastNameNew').value,
                     age: document.getElementById('ageNew').value,
+                    password: document.getElementById('passwordNew').value,
                     email: document.getElementById('emailNew').value,
-                    userPassword: document.getElementById('passwordNew').value,
-                    roles: Array.from(document.getElementById('rolesNew').selectedOptions).map(option => ({ name: option.value })),
+                    roles: selectedRoles.map(role => ({name: role}))
                 })
             })
                 .then((response) => {
@@ -406,103 +454,23 @@
 
                         getAllUsers();
                     }
-                });
+                })
+                .catch(error => console.error('Ошибка при добавлении пользователя:', error));
         });
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fillRolesSelect();
+        addNewUser();
+    });
 
 
     function closeModal() {
-        document.querySelectorAll(".btn-close").forEach((btn) => btn.click());
+        document.querySelectorAll(".btn-close").forEach((btn) => btn.click())
     }
 
-
-    //
-    // function editModal(id) {
-    //     let editId = `${url}/${id}`;
-    //     fetch(editId, {
-    //         headers: {
-    //             'Accept': 'application/json',
-    //             'Content-Type': 'application/json;charset=UTF-8'
-    //         }
-    //     }).then(res => {
-    //         res.json().then(user => {
-    //             document.getElementById('editId').value = user.id;
-    //             document.getElementById('editName').value = user.firstname;
-    //             document.getElementById('editLastName').value = user.lastname;
-    //             document.getElementById('editAge').value = user.age;
-    //             document.getElementById('editEmail').value = user.email;
-    //             document.getElementById('editPassword').value = user.password;
-    //             document.getElementById('editRole').value = user.roleToSring;
-    //
-    //         });
-    //     });
-    // }
-    //
-    // async function editUser() {
-    //     let idValue = document.getElementById('editId').value;
-    //     let nameValue = document.getElementById('editName').value;
-    //     let lastNameValue = document.getElementById('editLastName').value;
-    //     let ageValue = document.getElementById('editAge').value;
-    //     let emailValue = document.getElementById('editEmail').value;
-    //     let passwordValue = document.getElementById('editPassword').value;
-    //     let role = Array.from(document.getElementById('editRole').selectedOptions).map(option => ({
-    //         role: option.value,
-    //         id: option.value === 'ROLE_USER' ? 2 : 1,
-    //         roles: []
-    //     }));
-    //
-    //     let user = {
-    //         id: idValue,
-    //         firstname: nameValue,
-    //         lastname: lastNameValue,
-    //         age: ageValue,
-    //         email: emailValue, // Добавлено поле email
-    //         password: passwordValue,
-    //         roles: role
-    //     };
-    //
-    //     await fetch(`${url}/${idValue}`, {
-    //         method: 'PATCH',
-    //         headers: {
-    //             'Accept': 'application/json',
-    //             'Content-Type': 'application/json;charset=UTF-8'
-    //         },
-    //         body: JSON.stringify(user)
-    //     });
-    //
-    //     closeModal();
-    //     getAllUsers();
-    // }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        getAllRoles();
-        // Другие необходимые действия при загрузке страницы
-    });
-    function getAllRoles() {
-        fetch('/roles', {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json;charset=UTF-8'
-            }
-        }).then(res => {
-            res.json().then(roles => {
-                buildRoleDropdown(roles);
-            });
-        });
-    }
-
-    function buildRoleDropdown(roles) {
-        let selectRole = document.getElementById('editRole');
-        selectRole.innerHTML = '';
-
-        roles.forEach(role => {
-            let option = document.createElement('option');
-            option.value = role.name;
-            option.text = role.name;
-            selectRole.add(option);
-        });
-    }
-
+    // **********************************
+    // Edit
     function editModal(id) {
         let editId = `${url}/${id}`;
         fetch(editId, {
@@ -519,14 +487,42 @@
                 document.getElementById('editEmail').value = user.email;
                 document.getElementById('editPassword').value = user.password;
 
-                // Установка ролей в выпадающем списке
-                let selectRole = document.getElementById('editRole');
-                selectRole.value = ''; // Сброс текущего выбора
-                user.roles.forEach(role => {
-                    selectRole.value = role;
+                let editRoleSelect = document.getElementById('editRole');
+                editRoleSelect.innerHTML = '';
+
+                fetchAllRolesAndPopulateSelect();
+
+                user.roles.forEach(userRole => {
+                    console.log('User Role:', userRole.name);
+                    Array.from(editRoleSelect.options).forEach(option => {
+                        console.log('Select Option:', option.value);
+                        if (option.value === userRole.name) {
+                            option.selected = true;
+                        }
+                    });
                 });
             });
         });
+    }
+
+
+    async function fetchAllRolesAndPopulateSelect() {
+        let editRoleSelect = document.getElementById('editRole');
+
+
+        let allRolesResponse = await fetch('/api/roles');
+        let allRoles = await allRolesResponse.json();
+
+
+        allRoles.forEach(role => {
+            let option = document.createElement('option');
+            option.value = role.id;
+            option.text = role.name.substring(5);
+            editRoleSelect.add(option);
+        });
+
+        console.log('All Roles:', allRoles);
+        console.log('Options in Select:', Array.from(editRoleSelect.options).map(option => option.value));
     }
 
     async function editUser() {
@@ -536,9 +532,11 @@
         let ageValue = document.getElementById('editAge').value;
         let emailValue = document.getElementById('editEmail').value;
         let passwordValue = document.getElementById('editPassword').value;
+
         let selectedRoles = Array.from(document.getElementById('editRole').options)
             .filter(option => option.selected)
-            .map(option => option.value);
+            .map(option => parseInt(option.value));
+
 
         let user = {
             id: idValue,
@@ -547,10 +545,10 @@
             age: ageValue,
             email: emailValue,
             password: passwordValue,
-            roles: selectedRoles
         };
 
-        await fetch(`${url}/${idValue}`, {
+
+        await fetch(`/api/users/${idValue}?roles=${selectedRoles.join(',')}`, {
             method: 'PATCH',
             headers: {
                 'Accept': 'application/json',
@@ -561,8 +559,11 @@
 
         closeModal();
         getAllUsers();
+        $('#yourModalId').modal('hide');
     }
 
+    // **********************************
+    // DELETE
 
     function deleteModal(id) {
         let delId = `${url}/${id}`;
@@ -573,12 +574,22 @@
             }
         }).then(res => {
             res.json().then(user => {
+                console.log("User Roles:", user.roles);
+
                 document.getElementById('deleteId').value = user.id;
-                document.getElementById('deleteName').value = user.name;
+                document.getElementById('deleteName').value = user.firstname;
                 document.getElementById('deleteLastName').value = user.lastname;
                 document.getElementById('deleteAge').value = user.age;
                 document.getElementById('deleteEmail').value = user.email;
-                document.getElementById('deleteRoles').value = user.roleToString;
+
+                let deleteRolesTextarea = document.getElementById('deleteRoles');
+                if (deleteRolesTextarea) {
+                    let rolesString = user.roles.map(role => role.name.substring(5)).join(' ');
+                    console.log("Roles String:", rolesString);
+                    deleteRolesTextarea.value = rolesString;
+                } else {
+                    console.error("Element with id 'deleteRoles' not found.");
+                }
             });
         });
     }
@@ -593,25 +604,19 @@
                 'Content-Type': 'application/json'
             }
         };
-        fetch(urlDel, method).then(() => {
+        try {
+            await fetch(urlDel, method);
             closeModal();
             getAllUsers();
-        });
+        } catch (error) {
+            console.error('Error deleting user:', error);
+        }
     }
 
     document.addEventListener('DOMContentLoaded', function () {
         getAllUsers();
     });
 </script>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css">
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
-<!--<script  src="/adminjs.js"></script>-->
 
 </body>
 
