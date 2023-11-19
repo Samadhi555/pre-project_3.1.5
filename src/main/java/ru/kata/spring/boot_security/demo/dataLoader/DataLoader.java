@@ -9,6 +9,7 @@ import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -31,7 +32,7 @@ public void run(String... args) {
         roleService.save(roleUser);
     }
 
-    List<String> adminRoles = Arrays.asList("ROLE_ADMIN", "ROLE_USER");
+    List<String> adminRoles = roleService.findAll().stream().map(Role::getName).collect(Collectors.toList());
     List<String> userRoles = Collections.singletonList("ROLE_USER");
 
     User adminUser = new User();
