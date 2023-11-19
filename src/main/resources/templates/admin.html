@@ -95,7 +95,9 @@
         <div class="tab-content bg-light overflow-auto" id="nav-tabContent">
             <!--                            Здесь содержится информация для вкладки User Table-->
             <div class="tab-pane fade show active" id="users" role="tabpanel" aria-labelledby="users-tab">
-                <h5 class="card-header" style="text-align: left; font-size: 1.25rem; padding-left: 10px; margin-top: 10px; margin-bottom: 10px; font-family: sans-serif;">All users</h5>
+                <h5 class="card-header"
+                    style="text-align: left; font-size: 1.25rem; padding-left: 10px; margin-top: 10px; margin-bottom: 10px; font-family: sans-serif;">
+                    All users</h5>
 
 
                 <div class="p-3 border bg-light">
@@ -124,7 +126,9 @@
                 <div class="container-fluid px-0">
                     <div class="row gx-2">
                         <div class="col-12">
-                            <div class="p-2 border bg-light" style="font-size: 1.25rem; font-family: sans-serif;">Add new user</div>
+                            <div class="p-2 border bg-light" style="font-size: 1.25rem; font-family: sans-serif;">Add
+                                new user
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -169,7 +173,8 @@
 
 
                                     <div class="d-grid gap-2">
-                                        <button class="btn btn-success" type="submit" onclick="newUserTab()">Add new user
+                                        <button class="btn btn-success" type="submit" onclick="newUserTab()">Add new
+                                            user
                                         </button>
                                     </div>
                                 </form>
@@ -177,8 +182,6 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
     </div>
@@ -209,7 +212,6 @@
                                 <label for="editName"><b>First name</b></label>
                                 <input class="form-control" type="text"
                                        id="editName" required>
-
                             </div>
 
                             <div class="mb-3 text-center">
@@ -371,7 +373,7 @@
                     <td>${user.email}</td>
                     <td>${user.roles.map(role => role.name.substring(5)).join(' ')}</td>
                     <td>
-                        <button id="button-edit" class="btn btn-sm btn-primary" type="button"
+                        <button id="button-edit" class="btn btn-sm btn-info" type="button"
                                 data-bs-toggle="modal" href="#editModal"
                                 onclick="editModal(${user.id})">Edit</button>
                     </td>

@@ -73,7 +73,6 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-
     public String roleToString() {
         StringBuilder sb = new StringBuilder();
         for (Role role : roles) {

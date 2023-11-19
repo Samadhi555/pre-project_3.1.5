@@ -52,13 +52,11 @@ public class AdminRESTController {
         return ResponseEntity.ok().build();
     }
 
-
     @DeleteMapping("/users/{id}")
     public ResponseEntity<HttpStatus> deleteUser(@PathVariable Long id) {
         userService.delete(id);
         return ResponseEntity.ok().build();
     }
-
 
     @GetMapping("/roles")
     public ResponseEntity<List<Role>> getAllRoles() {
