@@ -47,11 +47,4 @@ public class UserController {
         return "user";
     }
 
-//    @GetMapping("/user/{id}")
-//    public String getUserPageId(@PathVariable("id") Long id, Model model) {
-//        User user = userService.getUserById(id);
-//        model.addAttribute("user", user);
-//        return "user";
-//    }
-
 }
