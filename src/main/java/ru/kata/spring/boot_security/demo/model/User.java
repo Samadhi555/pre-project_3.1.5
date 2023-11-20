@@ -10,6 +10,7 @@ import javax.validation.constraints.Min;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -40,20 +41,20 @@ public class User implements UserDetails {
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> roles;
+    private Set<Role> roles;
 
 
     public User() {
     }
 
-    public User(List<Role> roles) {
+    public User(Set<Role> roles) {
         roles.add(new Role(1L, "ROLE_USER"));
         roles.add(new Role(2L, "ROLE_ADMIN"));
         this.roles = roles;
     }
 
 
-    public User(String firstname, String lastname, byte age, String password, String email, List<Role> roles) {
+    public User(String firstname, String lastname, byte age, String password, String email, Set<Role> roles) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.age = age;
@@ -62,7 +63,7 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    public User(Long id, String firstname, String lastname, String username, byte age, String password, String email, List<Role> roles) {
+    public User(Long id, String firstname, String lastname, String username, byte age, String password, String email, Set<Role> roles) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -139,11 +140,11 @@ public class User implements UserDetails {
         this.username = email;
     }
 
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 

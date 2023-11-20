@@ -25,15 +25,26 @@ public class DataLoader implements CommandLineRunner {
 
 @Override
 public void run(String... args) {
+
+    Role roleAdmin = new Role("ROLE_ADMIN");
+    Role roleUser = new Role("ROLE_USER");
     if (roleService.findAll().isEmpty()) {
-        Role roleAdmin = new Role("ROLE_ADMIN");
-        Role roleUser = new Role("ROLE_USER");
         roleService.save(roleAdmin);
         roleService.save(roleUser);
     }
 
-    List<String> adminRoles = roleService.findAll().stream().map(Role::getName).collect(Collectors.toList());
-    List<String> userRoles = Collections.singletonList("ROLE_USER");
+//    Set<String> adminRoles = (Set<String>) roleService.findAll().stream().map(Role::getName).collect(Collectors.toList());
+//    Set<String> userRoles = (Set<String>) Collections.singletonList("ROLE_USER");
+
+    Set<String> adminRoles = new LinkedHashSet<>();
+    Set<String> userRoles = new LinkedHashSet<>();
+
+    adminRoles.add(roleAdmin.getName());
+    adminRoles.add(roleUser.getName());
+    userRoles.add(roleUser.getName());
+
+
+
 
     User adminUser = new User();
     adminUser.setFirstname("Vasia");
