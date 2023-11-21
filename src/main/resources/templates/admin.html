@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:font-family="http://www.w3.org/1999/xhtml" lang="ru">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -30,6 +30,9 @@
 
         .table th, .table td {
             text-align: center;
+        }
+        .table {
+            background-color: white;
         }
     </style>
 
@@ -77,9 +80,9 @@
     </div>
 
 
-        <!-- Таблица пользователей -->
-        <div class="container-fluid">
-            <div class="tab-content" id="v-pills-tabContent">
+    <!-- Таблица пользователей -->
+    <div class="container-fluid">
+        <div class="tab-content" id="v-pills-tabContent">
             <div class="tab-pane fade show active" id="v-pills-admin" role="tabpanel"
                  aria-labelledby="v-pills-home-tab">
 
@@ -224,7 +227,7 @@
                                 <th class="col">Email</th>
                                 <th class="col">Role</th>
                             </thead>
-                            <tbody id="tableBodyUser1"></tbody>
+                            <tbody id="tableBodyUser"></tbody>
                         </table>
                     </div>
                 </div>
@@ -681,7 +684,7 @@
     }
 
     function fillUserData(user) {
-        const userDataBody = document.getElementById('tableBodyUser1');
+        const userDataBody = document.getElementById('tableBodyUser');
         userDataBody.innerHTML = ''; // Очистить тело таблицы
 
         const row = document.createElement('tr');
@@ -698,12 +701,12 @@
     }
 
     // Вызов функции при загрузке страницы
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         updateUserData();
     });
 
     // Обновление данных при каждом заходе на вкладку
-    document.getElementById('v-pills-user-tab').addEventListener('click', function() {
+    document.getElementById('v-pills-user-tab').addEventListener('click', function () {
         updateUserData();
     });
 

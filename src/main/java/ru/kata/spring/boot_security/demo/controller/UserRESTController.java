@@ -17,7 +17,6 @@ public class UserRESTController {
 
     private final UserService userService;
 
-
     @Autowired
     public UserRESTController(UserService userService) {
         this.userService = userService;

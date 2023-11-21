@@ -14,7 +14,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 
-
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
@@ -28,6 +27,7 @@ public class UserServiceImpl implements UserService {
         this.encoder = encoder;
         this.roleService = roleService;
     }
+
     @Override
     @Transactional(readOnly = true)
     public List<User> getAllUsers() {
@@ -64,10 +64,12 @@ public class UserServiceImpl implements UserService {
         existingUser.setLastname(user.getLastname());
         existingUser.setAge(user.getAge());
         existingUser.setEmail(user.getEmail());
-        existingUser.setPassword(encoder.encode(user.getPassword()));
+
+        if (!user.getPassword().equals(existingUser.getPassword())) {
+            existingUser.setPassword(encoder.encode(user.getPassword()));
+        }
 
         List<Role> newRoles = roleService.getRolesByIds(roleIds);
-
 
         if (!newRoles.isEmpty()) {
             existingUser.getRoles().retainAll(newRoles);
@@ -105,6 +107,5 @@ public class UserServiceImpl implements UserService {
     public List<Role> getAllRoles() {
         return roleService.findAll();
     }
-
 
 }

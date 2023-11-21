@@ -8,8 +8,8 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 
 @Component
@@ -23,47 +23,42 @@ public class DataLoader implements CommandLineRunner {
         this.roleService = roleService;
     }
 
-@Override
-public void run(String... args) {
+    @Override
+    public void run(String... args) {
 
-    Role roleAdmin = new Role("ROLE_ADMIN");
-    Role roleUser = new Role("ROLE_USER");
-    if (roleService.findAll().isEmpty()) {
-        roleService.save(roleAdmin);
-        roleService.save(roleUser);
+        Role roleAdmin = new Role("ROLE_ADMIN");
+        Role roleUser = new Role("ROLE_USER");
+        if (roleService.findAll().isEmpty()) {
+            roleService.save(roleAdmin);
+            roleService.save(roleUser);
+        }
+
+        Set<String> adminRoles = new LinkedHashSet<>();
+        Set<String> userRoles = new LinkedHashSet<>();
+
+        adminRoles.add(roleAdmin.getName());
+        adminRoles.add(roleUser.getName());
+        userRoles.add(roleUser.getName());
+
+
+        User adminUser = new User();
+        adminUser.setFirstname("Vasia");
+        adminUser.setLastname("Petrov");
+        adminUser.setAge((byte) 30);
+        adminUser.setEmail("admin@mail.ru");
+        adminUser.setPassword("admin");
+        adminUser.setRoles(roleService.getRolesByNames(adminRoles));
+
+        userService.save(adminUser);
+
+        User regularUser = new User();
+        regularUser.setFirstname("Masha");
+        regularUser.setLastname("Ivanova");
+        regularUser.setAge((byte) 25);
+        regularUser.setEmail("user@mail.ru");
+        regularUser.setPassword("user");
+        regularUser.setRoles(roleService.getRolesByNames(userRoles));
+
+        userService.save(regularUser);
     }
-
-//    Set<String> adminRoles = (Set<String>) roleService.findAll().stream().map(Role::getName).collect(Collectors.toList());
-//    Set<String> userRoles = (Set<String>) Collections.singletonList("ROLE_USER");
-
-    Set<String> adminRoles = new LinkedHashSet<>();
-    Set<String> userRoles = new LinkedHashSet<>();
-
-    adminRoles.add(roleAdmin.getName());
-    adminRoles.add(roleUser.getName());
-    userRoles.add(roleUser.getName());
-
-
-
-
-    User adminUser = new User();
-    adminUser.setFirstname("Vasia");
-    adminUser.setLastname("Petrov");
-    adminUser.setAge((byte) 30);
-    adminUser.setEmail("admin@mail.ru");
-    adminUser.setPassword("admin");
-    adminUser.setRoles(roleService.getRolesByNames(adminRoles));
-
-    userService.save(adminUser);
-
-    User regularUser = new User();
-    regularUser.setFirstname("Masha");
-    regularUser.setLastname("Ivanova");
-    regularUser.setAge((byte) 25);
-    regularUser.setEmail("user@mail.ru");
-    regularUser.setPassword("user");
-    regularUser.setRoles(roleService.getRolesByNames(userRoles));
-
-    userService.save(regularUser);
-}
 }
